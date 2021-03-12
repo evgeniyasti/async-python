@@ -18,8 +18,13 @@ async def send_data(sock):
 
 async def receive_data(sock):
     print("STARTING TO RECEIVE")
+    sock.settimeout(0)
     while True:
-        data = await sock.recv(1024)
+        try:
+            data = sock.recv(1024)
+        except:
+            await asyncio.sleep(0.1)
+            continue
         data0 = data.decode("utf-8")
         print(data0)
         if data0.find("7") > 0: #sentinel value
@@ -31,8 +36,8 @@ async def start_async(PORT):
     HOST = '127.0.0.1'    # The remote host
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.connect((HOST, PORT))
-        receive = asyncio.create_task(receive_data(sock))
         send = asyncio.create_task(send_data(sock))
+        receive = asyncio.create_task(receive_data(sock))
         await send
         await receive
 

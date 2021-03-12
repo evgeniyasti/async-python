@@ -23,7 +23,6 @@ async def receive_data(sock):
         data = sock.recv(1024)
         await asyncio.sleep(0.1)
         data0 = data.decode("utf-8")
-        # critical section
         print(data0)
         if data0.find("7") > 0: #sentinel value
             break
@@ -34,8 +33,8 @@ async def start_async(PORT):
     HOST = '127.0.0.1'    # The remote host
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.connect((HOST, PORT))
-        await send_data(sock)
         await receive_data(sock)
+        await send_data(sock)
 
 
 if __name__ == '__main__':
